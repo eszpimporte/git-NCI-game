@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#640a64" nextlayerid="6" nextobjectid="2">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#640a64" nextlayerid="6" nextobjectid="84">
  <tileset firstgid="1" source="../tiles_set/rouilny_ext.tsx"/>
  <layer id="4" name="color_back" width="40" height="40">
   <data encoding="csv">
@@ -178,8 +178,39 @@
 </data>
  </layer>
  <objectgroup id="5" name="objets">
-  <object id="1" name="first_start" x="1156" y="1118">
+  <object id="1" name="first_start" type="start" x="1156" y="1118">
    <point/>
   </object>
+  <object id="50" type="collision" x="-4" y="2" width="1284" height="30"/>
+  <object id="51" type="collision" x="-2" y="32" width="30" height="1250"/>
+  <object id="52" type="collision" x="28" y="1246" width="1254" height="38"/>
+  <object id="53" type="collision" x="1248" y="192" width="32" height="1050"/>
+  <object id="57" type="collision" x="576" y="307" width="671" height="30"/>
+  <object id="58" type="collision" x="1223" y="192" width="24" height="114"/>
+  <object id="59" type="collision" x="1185" y="337" width="62" height="16"/>
+  <object id="60" type="collision" x="203" y="32" width="117.5" height="33.5"/>
+  <object id="61" type="collision" x="192.5" y="63" width="32" height="50"/>
+  <object id="62" type="collision" x="127" y="95" width="65.5" height="33.5"/>
+  <object id="63" type="collision" x="90.5" y="127" width="37" height="33.5"/>
+  <object id="64" type="collision" x="63" y="156" width="29" height="68"/>
+  <object id="65" type="collision" x="30" y="220" width="30.5" height="36"/>
+  <object id="66" type="collision" x="127" y="528" width="611" height="33"/>
+  <object id="67" type="collision" x="833" y="556" width="60" height="17"/>
+  <object id="68" type="collision" x="30" y="447" width="34" height="192"/>
+  <object id="69" type="collision" x="65" y="480" width="30" height="131"/>
+  <object id="70" type="collision" x="94" y="511" width="35" height="67"/>
+  <object id="71" type="collision" x="28" y="798" width="36" height="165"/>
+  <object id="72" type="collision" x="65" y="831" width="59" height="100"/>
+  <object id="73" type="collision" x="223" y="818" width="34" height="127"/>
+  <object id="74" type="collision" x="257" y="830" width="26" height="103"/>
+  <object id="75" type="collision" x="512" y="1216" width="128" height="31"/>
+  <object id="76" type="collision" x="575" y="1088" width="32" height="128"/>
+  <object id="77" type="collision" x="510" y="1201" width="64" height="13"/>
+  <object id="78" type="collision" x="542" y="1182" width="33" height="19"/>
+  <object id="79" type="collision" x="457" y="864" width="89" height="33"/>
+  <object id="80" type="collision" x="542" y="849" width="577" height="33"/>
+  <object id="81" type="collision" x="1215" y="831" width="30" height="99"/>
+  <object id="82" type="collision" x="1088" y="864" width="128" height="48"/>
+  <object id="83" type="collision" x="481" y="896" width="62" height="18"/>
  </objectgroup>
 </map>

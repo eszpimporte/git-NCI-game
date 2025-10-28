@@ -7,8 +7,10 @@ class Sprite(pygame.sprite.Sprite):
 
     def __init__(self, pos:tuple[int]|None=(0,0), fichier_imgae:str|None=None, movible:bool|None=False)->None:
         super().__init__()
+
         #Position
         self.pos = pos
+        self.old_pos = self.pos[:]
 
         #Deplacement
         self.movible = movible
@@ -26,8 +28,9 @@ class Sprite(pygame.sprite.Sprite):
         self.image.set_colorkey(Sprite.DEFAULT_SPRITE_COLORKEY)
         #Pour créer un rect ... en gros on en a besoin
         self.rect = self.image.get_rect()
+        self.feet = pygame.Rect(0,0,self.rect.width*0.6,12)
 
-
+    #Lier les coordonnées x et y avec la position du sprite
     @property
     def x(self):
         return self.pos[0]
@@ -43,9 +46,10 @@ class Sprite(pygame.sprite.Sprite):
     
 
     #Où le sprite est placé au lancement
-    def init_position_at_start(self, pos):
-        self.x = pos[0]
-        self.y = pos[1]
+    def tp_sprite_to(self, pos):
+        self.pos = pos
+        self.update()
+        self.feet.midbottom = self.rect.midbottom
 
 
     #Fonction appliquant tous les déplacements aux personnages qu'il est censé subir, cette fonction
@@ -55,17 +59,29 @@ class Sprite(pygame.sprite.Sprite):
             vect_norme = math.sqrt(self.vect_x**2 + self.vect_y**2)
             
             if vect_norme != 0:
+                #Obtenir avant déplacement l'ancienne colision
+                self.old_pos = self.pos[:]
+                #Bouger le sprite relativement à la vitesse, fps et mouvement
                 self.x += self.vect_x*self.speed/(fps*vect_norme)
                 self.y += self.vect_y*self.speed/(fps*vect_norme)
-
+                #Bouger la colision au niveau des pieds
+                self.update()
+                self.feet.midbottom = self.rect.midbottom
+                #NE PAS ACCUMULER LE MOUVEMENT (à part sys d'acceleration)
                 self.vect_x = 0
                 self.vect_y = 0
+    
 
+    #Se replacer si colision
+    def move_back(self):
+        self.pos = self.old_pos[:]
+        self.feet.midbottom = self.rect.midbottom
 
+    #Essentiel pr bouger le rect du sprite avec le sprite dn le code
     def update(self):
         self.rect.topleft = self.pos
 
-
+    #Retourner l'image à afficher
     def get_image(self, x, y):
         image = pygame.Surface([32,32])
         image.blit(self.fichier_image_sprite, (0,0), (x,y,32,32))

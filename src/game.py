@@ -9,6 +9,7 @@ import time
 
 class Game():
     def __init__(self)->None:
+        #La fenêtre du jeu
         self.screen = pygame.display.set_mode((1000, 700), flags=pygame.RESIZABLE)
         pygame.display.set_caption("THE NCI GAME !")
 
@@ -25,34 +26,25 @@ class Game():
 
         #Créer un joueur
         self.player = Player()
-        object_for_player_pos = tmx_data.get_object_by_name("first_start")
-        self.player.init_position_at_start((object_for_player_pos.x,object_for_player_pos.y))
 
         #Créer le groupe
-        self.layer_group = pyscroll.PyscrollGroup(map_layer, default_layer=10)
-        self.layer_group.add(self.player)
+        self.group = pyscroll.PyscrollGroup(map_layer, default_layer=10)
+        self.group.add(self.player)
+
+        #Placer le joueur à sa position de départ
+        object_for_player_pos = tmx_data.get_object_by_name("first_start")
+        self.player.tp_sprite_to((object_for_player_pos.x,object_for_player_pos.y))
 
         #L'outil d'affichage
         self.drawer = Draw(self.screen)
-    
 
-    def handle_player_inputs(self)->None:
-        input_pressed = pygame.key.get_pressed()
+        #Collisions
+        self.collision_rects = []
+        for obj_collision in tmx_data.objects:
+            if obj_collision.type == "collision":
+                self.collision_rects.append(pygame.Rect(obj_collision.x,obj_collision.y,obj_collision.width,obj_collision.height))
 
-        if input_pressed[pygame.K_z]:
-            self.player.vect_y -= 1
-        if input_pressed[pygame.K_q]:
-            self.player.vect_x -= 1
-        if input_pressed[pygame.K_s]:
-            self.player.vect_y += 1
-        if input_pressed[pygame.K_d]:
-            self.player.vect_x += 1
-
-
-    def move_sprites(self)->None:
-        self.player.move(self.fps)
-
-
+#Récup tous les éléments relatifs au jeu en général, style quitter, menu ...
     def catch_events(self)->None:
         for event in pygame.event.get():
             #Keys
@@ -67,25 +59,54 @@ class Game():
             elif event.type == pygame.QUIT:
                 self.running = False
 
+#Récup les input mais pr faire des actions avec le joueur
+    def handle_player_inputs(self)->None:
+        input_pressed = pygame.key.get_pressed()
 
+        if input_pressed[pygame.K_z]:
+            self.player.vect_y -= 1
+        if input_pressed[pygame.K_q]:
+            self.player.vect_x -= 1
+        if input_pressed[pygame.K_s]:
+            self.player.vect_y += 1
+        if input_pressed[pygame.K_d]:
+            self.player.vect_x += 1
+
+#Bouger les sprites en fonctions de leurs colisions
+    def move_sprites(self)->None:
+        self.player.move(self.fps)
+
+#Mettre à jour les objets sur la carte
+    def update_objects(self)->None:
+        self.group.update()
+
+        #Vérifications colisions
+        for sprite in self.group.sprites():
+            if sprite.feet.collidelist(self.collision_rects) > -1:
+                sprite.move_back()         
+
+#Afficher les updates
     def paint(self)->None:
-        self.layer_group.update()
-        self.layer_group.draw(self.screen)
+        #Après que layer group ait été update
+        self.group.draw(self.screen)
         self.drawer.draw_on_map()
 
-    
+#Bouger la caméra avec le joueur
     def update_camera(self)->None:
-        self.layer_group.center(self.player.pos)
+        self.group.center(self.player.pos)
 
-    
+#Retourner des infos de fonctionnement du jeu
     def get_stats_info_running(self)->None:
         self.true_fps = self.clock.get_fps()
 
-
+#Boucle du jeu
     def run(self)->None:
+        #Variable pour faire continuer ou non le jeu
         self.running = True
+        #Clock pr les fps
         self.clock = pygame.time.Clock()
 
+        #Boucle du jeu
         while self.running:
             #Touches
             self.catch_events()
@@ -93,6 +114,7 @@ class Game():
 
             #Events et forces
             self.move_sprites()
+            self.update_objects()
             
             #Affichage
             self.paint()
