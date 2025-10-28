@@ -1,4 +1,4 @@
-### Jeu du NCI
+# Jeu du NCI
 
 Pour installer les modules requis pour le jeu, rentrer la commande suivante dans votre terminal depuis le dossier du jeu :
 
@@ -11,7 +11,7 @@ ou
 pip install -r requirements.txt
 ```
 
-# Lancer le jeu
+### Lancer le jeu
 
 Pour lancer le jeu, depuis le dossier du jeu, rentrer dans votre terminal la commande suivante :
     
