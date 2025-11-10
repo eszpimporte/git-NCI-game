@@ -6,3 +6,4 @@ version = "0.0.5"
 #0.0.3 : base du programme jusqu'à placer le joueur et l'afficher
 #0.0.4 : déplacement du personnage et normalisation de son déplacement, cool !
 #0.0.5 : collisions avec le personnage (pr tout sprite enregistré) dn la première carte
+#0.0.6 : gérer les maps, et réarrangement du programme

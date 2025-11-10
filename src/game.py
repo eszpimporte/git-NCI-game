@@ -4,6 +4,7 @@ from src.logs_writer import *
 from src.save_writer import *
 from src.sprite import Sprite
 from src.player import Player
+from map_manager import Map_Manager
 import time
 
 
@@ -16,33 +17,46 @@ class Game():
         #Vitesse à laquelle le jeu va exécuter la boucle par seconde
         self.fps = 60
 
-        #Load les données -> à exporter
-        tmx_data = pytmx.util_pygame.load_pygame("img/assets/cartes/map_rouilny_0_0.tmx")
-        #Récupérer les données pour pyscroll
-        map_data = pyscroll.data.TiledMapData(tmx_data)
-        #Les calques
-        map_layer = pyscroll.orthographic.BufferedRenderer(map_data, self.screen.get_size())
-        map_layer.zoom = 1.5
+        #L'outil d'affichage, permet d'afficher ce qu'on veut sur le screen
+        self.drawer = Draw(self.screen)
+
+        #Gérer les différentes cartes
+        self.map_manager = Map_Manager()
 
         #Créer un joueur
         self.player = Player()
 
+
+
+
+
+
+
+
+
+    def init_groups(self)->None:
         #Créer le groupe
-        self.group = pyscroll.PyscrollGroup(map_layer, default_layer=10)
+        self.group = pyscroll.PyscrollGroup(self.map_manager.map_layer, default_layer=10)
         self.group.add(self.player)
 
         #Placer le joueur à sa position de départ
-        object_for_player_pos = tmx_data.get_object_by_name("first_start")
+        object_for_player_pos = self.map_manager.tmx_data.get_object_by_name("main_enter")    #main_enter : nom du point de départ principal
         self.player.tp_sprite_to((object_for_player_pos.x,object_for_player_pos.y))
 
-        #L'outil d'affichage
-        self.drawer = Draw(self.screen)
+        #Obtenir (tempo) la collision de la sortie
+        exit_est = self.map_manager.tmx_data.get_object_by_name("est_exit")
+        self.exit_est_rect = pygame.Rect(exit_est.x,exit_est.y,exit_est.width,exit_est.height)
 
         #Collisions
         self.collision_rects = []
-        for obj_collision in tmx_data.objects:
+        for obj_collision in self.map_manager.tmx_data.objects:
             if obj_collision.type == "collision":
                 self.collision_rects.append(pygame.Rect(obj_collision.x,obj_collision.y,obj_collision.width,obj_collision.height))
+
+
+
+
+
 
 #Récup tous les éléments relatifs au jeu en général, style quitter, menu ...
     def catch_events(self)->None:
@@ -80,6 +94,10 @@ class Game():
     def update_objects(self)->None:
         self.group.update()
 
+        #Vérifications exit
+        if self.player.feet.colliderect(self.exit_est_rect):
+            self.map_manager.switch_map()
+
         #Vérifications colisions
         for sprite in self.group.sprites():
             if sprite.feet.collidelist(self.collision_rects) > -1:
@@ -99,8 +117,37 @@ class Game():
     def get_stats_info_running(self)->None:
         self.true_fps = self.clock.get_fps()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #Boucle du jeu
     def run(self)->None:
+        self.init_groups()
+
         #Variable pour faire continuer ou non le jeu
         self.running = True
         #Clock pr les fps

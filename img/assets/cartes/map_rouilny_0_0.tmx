@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#640a64" nextlayerid="6" nextobjectid="84">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#640a64" nextlayerid="6" nextobjectid="88">
  <tileset firstgid="1" source="../tiles_set/rouilny_ext.tsx"/>
  <layer id="4" name="color_back" width="40" height="40">
   <data encoding="csv">
@@ -178,7 +178,7 @@
 </data>
  </layer>
  <objectgroup id="5" name="objets">
-  <object id="1" name="first_start" type="start" x="1156" y="1118">
+  <object id="1" name="main_enter" type="enter" x="1156" y="1118">
    <point/>
   </object>
   <object id="50" type="collision" x="-4" y="2" width="1284" height="30"/>
@@ -212,5 +212,9 @@
   <object id="81" type="collision" x="1215" y="831" width="30" height="99"/>
   <object id="82" type="collision" x="1088" y="864" width="128" height="48"/>
   <object id="83" type="collision" x="481" y="896" width="62" height="18"/>
+  <object id="84" name="est_enter" type="enter" x="1173.33" y="114">
+   <point/>
+  </object>
+  <object id="86" name="est_exit" type="exit" x="1248.5" y="34" width="30.5" height="155"/>
  </objectgroup>
 </map>
