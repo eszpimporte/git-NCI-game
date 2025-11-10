@@ -18,4 +18,4 @@ class Map_Manager():
 
 
     def switch_map(self):
-        
+        pass

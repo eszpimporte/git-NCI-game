@@ -4,7 +4,7 @@ from src.logs_writer import *
 from src.save_writer import *
 from src.sprite import Sprite
 from src.player import Player
-from map_manager import Map_Manager
+from src.map_manager import Map_Manager
 import time
 
 
@@ -21,7 +21,7 @@ class Game():
         self.drawer = Draw(self.screen)
 
         #Gérer les différentes cartes
-        self.map_manager = Map_Manager()
+        self.map_manager = Map_Manager(self.screen)
 
         #Créer un joueur
         self.player = Player()
