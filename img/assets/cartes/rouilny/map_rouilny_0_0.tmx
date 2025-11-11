@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#640a64" nextlayerid="6" nextobjectid="88">
- <tileset firstgid="1" source="../tiles_set/rouilny_ext.tsx"/>
+ <tileset firstgid="1" source="../../tiles_set/rouilny_ext.tsx"/>
  <layer id="4" name="color_back" width="40" height="40">
   <data encoding="csv">
 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,

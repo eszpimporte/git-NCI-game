@@ -34,18 +34,41 @@ class Game():
 
 
 
-    def init_groups(self)->None:
+    def init_map_groups(self, which_enter:str|None="main_enter")->None:
         #Créer le groupe
-        self.group = pyscroll.PyscrollGroup(self.map_manager.map_layer, default_layer=10)
+        self.group = pyscroll.PyscrollGroup(self.map_manager.map_layer, default_layer=5)
         self.group.add(self.player)
 
         #Placer le joueur à sa position de départ
-        object_for_player_pos = self.map_manager.tmx_data.get_object_by_name("main_enter")    #main_enter : nom du point de départ principal
+        object_for_player_pos = self.map_manager.tmx_data.get_object_by_name(which_enter)    #main_enter : nom du point de départ principal
         self.player.tp_sprite_to((object_for_player_pos.x,object_for_player_pos.y))
 
-        #Obtenir (tempo) la collision de la sortie
-        exit_est = self.map_manager.tmx_data.get_object_by_name("est_exit")
-        self.exit_est_rect = pygame.Rect(exit_est.x,exit_est.y,exit_est.width,exit_est.height)
+        #Obtenir (tempo) la collision de la sortie, optimal : for objetc by class with tmx
+        self.group_exit_collides = []
+        try:
+            exit_est = self.map_manager.tmx_data.get_object_by_name("est_exit")  #
+            self.group_exit_collides.append(("est_exit",pygame.Rect(exit_est.x,exit_est.y,exit_est.width,exit_est.height)))  #
+        except KeyError:  #Error lorsque l'exit n'existe pas
+            pass
+        
+        try:
+            exit_ouest = self.map_manager.tmx_data.get_object_by_name("ouest_exit")  #
+            self.group_exit_collides.append(("ouest_exit",pygame.Rect(exit_ouest.x,exit_ouest.y,exit_ouest.width,exit_ouest.height)))  #
+        except KeyError:  #Error lorsque l'exit n'existe pas
+            pass
+
+        try:
+            exit_nord = self.map_manager.tmx_data.get_object_by_name("nord_exit")  #
+            self.group_exit_collides.append(("nord_exit",pygame.Rect(exit_nord.x,exit_nord.y,exit_nord.width,exit_nord.height)))  #
+        except KeyError:  #Error lorsque l'exit n'existe pas
+            pass
+
+        try:
+            exit_sud = self.map_manager.tmx_data.get_object_by_name("sud_exit")  #
+            self.group_exit_collides.append(("sud_exit",pygame.Rect(exit_sud.x,exit_sud.y,exit_sud.width,exit_sud.height)))  #
+        except KeyError:  #Error lorsque l'exit n'existe pas
+            pass
+
 
         #Collisions
         self.collision_rects = []
@@ -95,8 +118,11 @@ class Game():
         self.group.update()
 
         #Vérifications exit
-        if self.player.feet.colliderect(self.exit_est_rect):
-            self.map_manager.switch_map()
+        for exit_collision in self.group_exit_collides:
+            if self.player.feet.colliderect(exit_collision[1]):   #Rect de l'exit
+                exit_name = exit_collision[0]
+                self.map_manager.switch_map(self.player,exit_name)
+                self.init_map_groups(self.map_manager.cardinal_point_convert(exit_name))
 
         #Vérifications colisions
         for sprite in self.group.sprites():
@@ -146,7 +172,7 @@ class Game():
 
 #Boucle du jeu
     def run(self)->None:
-        self.init_groups()
+        self.init_map_groups()
 
         #Variable pour faire continuer ou non le jeu
         self.running = True

@@ -2,7 +2,7 @@ import pygame
 from src.sprite import Sprite
 
 class Player(Sprite):
-    DEFAULT_PLAYER_SPEED = 100
+    DEFAULT_PLAYER_SPEED = 300
 
 
     def __init__(self):
