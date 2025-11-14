@@ -14,8 +14,9 @@ class Game():
         self.screen = pygame.display.set_mode((1000, 700), flags=pygame.RESIZABLE)
         pygame.display.set_caption("THE NCI GAME !")
 
-        #Vitesse à laquelle le jeu va exécuter la boucle par seconde
+        #Vitesse à laquelle le jeu va exécuter la boucle par seconde, init temp à 60
         self.fps = 60
+        self.SEUL_FPS = 20
 
         #L'outil d'affichage, permet d'afficher ce qu'on veut sur le screen
         self.drawer = Draw(self.screen)
@@ -176,11 +177,14 @@ class Game():
 
         #Variable pour faire continuer ou non le jeu
         self.running = True
-        #Clock pr les fps
+        #Clock pr les fps askip
         self.clock = pygame.time.Clock()
 
         #Boucle du jeu
         while self.running:
+            #Start de boucle
+            t1 = time.time()
+
             #Touches
             self.catch_events()
             self.handle_player_inputs()
@@ -195,5 +199,10 @@ class Game():
             
             #Running correctly
             self.get_stats_info_running()
-            self.clock.tick(self.fps)
-            
+
+            #End de boucle
+            t2 = time.time()
+            #fps réajusté
+            self.fps = max(round(1/(max(t2-t1,0.0001))),self.SEUL_FPS)
+            #On ralentit un peu
+            time.sleep(0.001)

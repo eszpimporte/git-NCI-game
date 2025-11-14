@@ -1,10 +1,15 @@
 import pygame, pytmx, pyscroll
 from src.player import Player
 class Map_Manager():
+
+    DICT_TRANSITIONS_ZONES = {}
+
     def __init__(self, screen):
         #Inits du Game()
         self.screen = screen
 
+        #Inits des listes de données à prendre en compte
+        self.LISTE_TRANSITIONS_ZONES = Map_Manager.DICT_TRANSITIONS_ZONES.keys()
 
         #Load les données -> à exporter
         self.tmx_data = pytmx.util_pygame.load_pygame("img/assets/cartes/rouilny/map_rouilny_0_0.tmx")
@@ -26,8 +31,12 @@ class Map_Manager():
             return "sud_enter"
         elif exit_name == "sud_exit":
             return "nord_enter"
+        elif exit_name == "main_exit":
+            return "main_enter"
+        elif exit_name in self.LISTE_TRANSITIONS_ZONES:
+            return Map_Manager.DICT_TRANSITIONS_ZONES[exit_name]
         else:
-            return exit_name.replace("exit","enter")
+            assert NameError(name=exit_name)
 
 
     def switch_map(self, player:Player, exit_name:str|None="main_exit")->None:
