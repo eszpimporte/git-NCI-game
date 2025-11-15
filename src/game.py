@@ -34,52 +34,33 @@ class Game():
 
 
 
-
+#Initialise tous les éléments de la carte
     def init_map_groups(self, which_enter:str|None="main_enter")->None:
         #Créer le groupe
         self.group = pyscroll.PyscrollGroup(self.map_manager.map_layer, default_layer=5)
         self.group.add(self.player)
 
+
         #Placer le joueur à sa position de départ
         object_for_player_pos = self.map_manager.tmx_data.get_object_by_name(which_enter)    #main_enter : nom du point de départ principal
         self.player.tp_sprite_to((object_for_player_pos.x,object_for_player_pos.y))
 
+
         #Obtenir (tempo) la collision de la sortie, optimal : for objetc by class with tmx
-        self.group_exit_collides = []
-        try:
-            exit_est = self.map_manager.tmx_data.get_object_by_name("est_exit")  #
-            self.group_exit_collides.append(("est_exit",pygame.Rect(exit_est.x,exit_est.y,exit_est.width,exit_est.height)))  #
-        except KeyError:  #Error lorsque l'exit n'existe pas
-            pass
-        
-        try:
-            exit_ouest = self.map_manager.tmx_data.get_object_by_name("ouest_exit")  #
-            self.group_exit_collides.append(("ouest_exit",pygame.Rect(exit_ouest.x,exit_ouest.y,exit_ouest.width,exit_ouest.height)))  #
-        except KeyError:  #Error lorsque l'exit n'existe pas
-            pass
+        self.group_exits = []
+            
 
-        try:
-            exit_nord = self.map_manager.tmx_data.get_object_by_name("nord_exit")  #
-            self.group_exit_collides.append(("nord_exit",pygame.Rect(exit_nord.x,exit_nord.y,exit_nord.width,exit_nord.height)))  #
-        except KeyError:  #Error lorsque l'exit n'existe pas
-            pass
+        #Collisions et Exits, récupérer les groupes d'objets d'une classe spécifique
+        self.group_collisions_retcs = []   ;self.group_collisions_retcs : list[pygame.Rect]
+        self.group_exits = []       ;self.group_exits : list[dict]
+        self.group_exits_rects = [] ;self.group_exits_rects : list[pygame.Rect]
 
-        try:
-            exit_sud = self.map_manager.tmx_data.get_object_by_name("sud_exit")  #
-            self.group_exit_collides.append(("sud_exit",pygame.Rect(exit_sud.x,exit_sud.y,exit_sud.width,exit_sud.height)))  #
-        except KeyError:  #Error lorsque l'exit n'existe pas
-            pass
-
-
-        #Collisions
-        self.collision_rects = []
         for obj_collision in self.map_manager.tmx_data.objects:
             if obj_collision.type == "collision":
-                self.collision_rects.append(pygame.Rect(obj_collision.x,obj_collision.y,obj_collision.width,obj_collision.height))
-
-
-
-
+                self.group_collisions_retcs.append(pygame.Rect(obj_collision.x,obj_collision.y,obj_collision.width,obj_collision.height))
+            elif obj_collision.type == "exit":
+                self.group_exits.append({"name":obj_collision.name, "rect":pygame.Rect(obj_collision.x,obj_collision.y,obj_collision.width,obj_collision.height)})
+                self.group_exits_rects.append(pygame.Rect(obj_collision.x,obj_collision.y,obj_collision.width,obj_collision.height))
 
 
 #Récup tous les éléments relatifs au jeu en général, style quitter, menu ...
@@ -118,16 +99,16 @@ class Game():
     def update_objects(self)->None:
         self.group.update()
 
-        #Vérifications exit
-        for exit_collision in self.group_exit_collides:
-            if self.player.feet.colliderect(exit_collision[1]):   #Rect de l'exit
-                exit_name = exit_collision[0]
-                self.map_manager.switch_map(self.player,exit_name)
-                self.init_map_groups(self.map_manager.cardinal_point_convert(exit_name))
+        #Vérifications exit, l'utilisation d'un test avant d'itérer tous les éléments pour chercher avec lequel le perso est en collision est plus optimisé
+        if self.player.feet.collidelist(self.group_exits_rects) > -1:
+            for exit_collision in self.group_exits:
+                if self.player.feet.colliderect(exit_collision["rect"]):   #Rect de l'exit
+                    self.map_manager.switch_map(self.player,exit_collision["name"])   #Name de l'exit
+                    self.init_map_groups(self.map_manager.cardinal_point_convert(self.player, exit_collision["name"]))
 
         #Vérifications colisions
         for sprite in self.group.sprites():
-            if sprite.feet.collidelist(self.collision_rects) > -1:
+            if sprite.feet.collidelist(self.group_collisions_retcs) > -1:
                 sprite.move_back()         
 
 #Afficher les updates
@@ -142,7 +123,8 @@ class Game():
 
 #Retourner des infos de fonctionnement du jeu
     def get_stats_info_running(self)->None:
-        self.true_fps = self.clock.get_fps()
+        #self.true_fps = self.clock.get_fps()
+        pass
 
 
 
@@ -185,6 +167,7 @@ class Game():
             #Start de boucle
             t1 = time.time()
 
+
             #Touches
             self.catch_events()
             self.handle_player_inputs()
@@ -199,6 +182,7 @@ class Game():
             
             #Running correctly
             self.get_stats_info_running()
+
 
             #End de boucle
             t2 = time.time()

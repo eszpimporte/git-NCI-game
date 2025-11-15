@@ -13,3 +13,10 @@ class Player(Sprite):
         #zone et tronçon où se situe le player
         self.zone = "rouilny"
         self.troncon = (0,0)
+        self.subzone = "None"
+
+
+    def move_zone(self, zone:str, troncon:tuple[int], subzone:str|None="None")->None:
+        self.zone = zone
+        self.troncon = troncon
+        self.subzone = subzone
