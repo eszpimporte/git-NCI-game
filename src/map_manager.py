@@ -13,7 +13,7 @@ from img.assets.cartes.ref_zones_changes import REF_SUBZONES, DICT_TRANSITIONS_Z
 
 class Map_Manager():
 
-    def __init__(self, screen):
+    def __init__(self, screen, player:Player):
         #Inits du Game()
         self.screen = screen
 
@@ -21,7 +21,10 @@ class Map_Manager():
         self.LISTE_TRANSITIONS_ZONES = DICT_TRANSITIONS_ZONES.keys()
 
         #Load les données -> à exporter
-        self.tmx_data = pytmx.util_pygame.load_pygame("img/assets/cartes/rouilny/map_rouilny_0_0.tmx")
+        if player.subzone != "None":
+            self.tmx_data = pytmx.util_pygame.load_pygame(f"img/assets/cartes/{player.zone}/map_{player.zone}_{player.subzone}.tmx")
+        else:
+            self.tmx_data = pytmx.util_pygame.load_pygame(f"img/assets/cartes/{player.zone}/map_{player.zone}_{player.troncon[0]}_{player.troncon[1]}.tmx")
         
         #Récupérer les données pour pyscroll
         self.map_data = pyscroll.data.TiledMapData(self.tmx_data)

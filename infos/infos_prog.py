@@ -1,4 +1,4 @@
-version = "0.0.7"
+version = "0.0.8"
 
 
 #0.0.1 : programme de base
@@ -8,3 +8,4 @@ version = "0.0.7"
 #0.0.5 : collisions avec le personnage (pr tout sprite enregistré) dn la première carte
 #0.0.6 : gérer les maps, et réarrangement du programme, cas spécials de map pas traités
 #0.0.7 : fps réglés mais instables sur mon PC, changements de subzones mise à jour, manque les zones en gé
+#0.0.8 : saves ajoutées, réarrangement du programme conséquent

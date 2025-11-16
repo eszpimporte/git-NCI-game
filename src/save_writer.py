@@ -1,28 +1,35 @@
 import datetime
 from src.logs_writer import logs, write_logs
+from saves.save1 import save as save1
+from saves.save2 import save as save2
+from saves.save3 import save as save3
 
-save : dict
 
-def to_save()->None:
-    logs.append(f"Save à {datetime.datetime.now().strftime("%H:%M:%S le %d/%m/%Y")}")
-    with open("save.py", "w", encoding="utf-8") as save_file:
-        save_to_write = "{" + (",".join(map(str,save.items()))).replace("(","").replace(")","").replace(";",":") + "}"
-        save_file.write(save_to_write)
-    write_logs()
+class Save():
+    save_numb_open = 0
+    save : dict
 
-def get_save()->dict:
-    with open("save.py", "r", encoding="utf-8") as save_file:
-        save : dict
-        save = eval(save_file.readline())
-        assert type(save) == dict
-    return save
 
-def init_save():
-    global save
-    try:
-        save = get_save()
-    except AssertionError or FileNotFoundError:
-        save = {}
-    except:
-        logs.append("An unknown error occured !")
-        save = {}
+    def choice_save()->None:
+        numb = int(input("Veuillez entrez la save (1 à 3) que vous allez ouvrir : _"))
+        assert numb in [1,2,3]
+        Save.save_numb_open = numb
+
+        if numb == 1:
+            Save.save = save1
+        elif numb == 2:
+            Save.save = save2
+        elif numb == 3:
+            Save.save = save3
+
+
+    def to_save(new_save)->None:
+        logs.append(f"Save à {datetime.datetime.now().strftime("%H:%M:%S le %d/%m/%Y")}")
+        with open(f"saves/save{Save.save_numb_open}.py", "w", encoding="utf-8") as save_file:
+            save_to_write = "save = " + str(new_save)
+            save_file.write(save_to_write)
+        write_logs()
+
+
+    def get_save()->dict:
+        return Save.save

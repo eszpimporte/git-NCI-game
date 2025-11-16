@@ -48,9 +48,10 @@ class Sprite(pygame.sprite.Sprite):
     #Où le sprite est placé au lancement
     def tp_sprite_to(self, pos):
         self.pos = pos
-        self.update()
+        self.old_pos = pos
         self.feet.midbottom = self.rect.midbottom
-
+        self.update()
+        
 
     #Fonction appliquant tous les déplacements aux personnages qu'il est censé subir, cette fonction
     #est donc appelée dans game pour tous les sprites movibles

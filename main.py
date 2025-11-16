@@ -1,9 +1,9 @@
 import pygame, pytmx, pyscroll
 from src.game import Game
-from src.save_writer import init_save
+from src.save_writer import Save
 
 if __name__ == '__main__':
-    init_save()
+    Save.choice_save()
 
     pygame.init()
     game = Game()
