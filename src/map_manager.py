@@ -20,7 +20,7 @@ class Map_Manager():
         #Inits des listes de données à prendre en compte
         self.LISTE_TRANSITIONS_ZONES = DICT_TRANSITIONS_ZONES.keys()
 
-        #Load les données -> à exporter
+        #Load les données
         if player.subzone != "None":
             self.tmx_data = pytmx.util_pygame.load_pygame(f"img/assets/cartes/{player.zone}/map_{player.zone}_{player.subzone}.tmx")
         else:

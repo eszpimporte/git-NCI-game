@@ -3,10 +3,12 @@ from src.game import Game
 from src.save_writer import Save
 
 if __name__ == '__main__':
-    Save.choice_save()
-
     pygame.init()
-    game = Game()
-    game.run()
+
+    #Save.choice_save()
+    run = True
+    while run:
+        game = Game()
+        run = game.run()
 
     pygame.quit()

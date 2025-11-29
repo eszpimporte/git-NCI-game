@@ -1,4 +1,4 @@
-version = "0.0.8"
+version = "0.0.9"
 
 
 #0.0.1 : programme de base
@@ -9,3 +9,4 @@ version = "0.0.8"
 #0.0.6 : gérer les maps, et réarrangement du programme, cas spécials de map pas traités
 #0.0.7 : fps réglés mais instables sur mon PC, changements de subzones mise à jour, manque les zones en gé
 #0.0.8 : saves ajoutées, réarrangement du programme conséquent
+#0.0.9 : ajout du menu principal et du choix de save par écrant, ajout des boutons et intéractions avec, resize

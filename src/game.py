@@ -5,18 +5,23 @@ from src.save_writer import Save
 from src.sprite import Sprite
 from src.player import Player
 from src.map_manager import Map_Manager
+from src.bouton import Bouton
 import time
 
 
 class Game():
     def __init__(self)->None:
+        #Taille de l'écrant ingame
+        self.SCREEN_DEFAULT_SIZE = (1000, 700)
+        self.resize_by_hor = True
+
         #La fenêtre du jeu
-        self.screen = pygame.display.set_mode((1000, 700), flags=pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode(self.SCREEN_DEFAULT_SIZE, flags=pygame.RESIZABLE)
         pygame.display.set_caption("THE NCI GAME !")
 
         #Vitesse à laquelle le jeu va exécuter la boucle par seconde, init temp à 60
         self.fps = 60
-        self.SEUL_FPS = 20
+        self.SEUIL_FPS = 20
 
         #L'outil d'affichage, permet d'afficher ce qu'on veut sur le screen
         self.drawer = Draw(self.screen)
@@ -26,6 +31,32 @@ class Game():
 
 
 #FONCTIONS INITIATRICES DU JEU
+#Boucle du main menu
+    def start_menu(self):
+        #Variables
+        self.start_menu_active = False
+        self.running_start_menu = True
+
+        while self.running_start_menu:
+            #Inputs
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    self.running_start_menu = False
+            key_pressed = pygame.key.get_pressed()
+            if key_pressed[pygame.K_RETURN]:
+                self.start_menu_active = True
+            if key_pressed[pygame.K_ESCAPE]:
+                self.start_menu_active = False
+
+            #Draw le background et boutons
+            self.drawer.draw_on_screen(self.drawer.mainfondlight, (0,0), self.screen.get_size())
+            if self.start_menu_active:
+                self.drawer.draw_dark_on_screen(127)
+                self.drawer.draw_on_screen(self.drawer.bouton, (max((self.screen.get_width()-self.drawer.bouton.get_width())/2,0), max((self.screen.get_height()-self.drawer.bouton.get_height())/2,0)))
+
+            pygame.display.flip()
+
 #Fonctions pour charger la sauvegarde
     def load_save(self):
         self.NEW_SAVE = True
@@ -139,6 +170,10 @@ class Game():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.VIDEORESIZE or event.type == pygame.VIDEOEXPOSE:
+                if self.resize_by_hor:
+                    self.map_manager.map_layer.zoom = self.screen.get_width()/self.SCREEN_DEFAULT_SIZE[0]
+                else:
+                    self.map_manager.map_layer.zoom = self.screen.get_height()/self.SCREEN_DEFAULT_SIZE[1]
                 self.reload_groups()
 
         self.handle_keyboard_inputs()
@@ -174,15 +209,20 @@ class Game():
 #
 #Fonction centrale du programme
     def run(self)->None:
-        #Initialisation du jeu
-        self.load_save()
-        self.init_map_groups()
-
         #True pour que le jeu tourne
         self.running = True
+        self.running_start_menu = True
 
-        #Clock pr les fps askip
-        self.clock = pygame.time.Clock()
+        #Main menu
+        self.start_menu()
+
+        if self.running:
+            #Initialisation du jeu
+            self.load_save()
+            self.init_map_groups()
+
+            #Clock pr les fps askip
+            self.clock = pygame.time.Clock()
 
 
         #Boucle du jeu
@@ -209,6 +249,9 @@ class Game():
             #End de boucle
             t2 = time.time()
             #fps réajusté
-            self.fps = max(round(1/(max(t2-t1,0.0001))),self.SEUL_FPS)
+            self.fps = max(round(1/(max(t2-t1,0.0001))),self.SEUIL_FPS)
             #On ralentit un peu
             time.sleep(0.001)
+
+        #Relancer le game mais au main menu ou False
+        return False
