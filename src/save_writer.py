@@ -10,8 +10,7 @@ class Save():
     save : dict
 
 
-    def choice_save()->None:
-        numb = int(input("Veuillez entrez la save (1 à 3) que vous allez ouvrir : _"))
+    def choice_save(numb:int)->None:
         assert numb in [1,2,3]
         Save.save_numb_open = numb
 

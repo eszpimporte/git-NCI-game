@@ -30,33 +30,8 @@ class Game():
         self.player = Player()
 
 
+
 #FONCTIONS INITIATRICES DU JEU
-#Boucle du main menu
-    def start_menu(self):
-        #Variables
-        self.start_menu_active = False
-        self.running_start_menu = True
-
-        while self.running_start_menu:
-            #Inputs
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                    self.running_start_menu = False
-            key_pressed = pygame.key.get_pressed()
-            if key_pressed[pygame.K_RETURN]:
-                self.start_menu_active = True
-            if key_pressed[pygame.K_ESCAPE]:
-                self.start_menu_active = False
-
-            #Draw le background et boutons
-            self.drawer.draw_on_screen(self.drawer.mainfondlight, (0,0), self.screen.get_size())
-            if self.start_menu_active:
-                self.drawer.draw_dark_on_screen(127)
-                self.drawer.draw_on_screen(self.drawer.bouton, (max((self.screen.get_width()-self.drawer.bouton.get_width())/2,0), max((self.screen.get_height()-self.drawer.bouton.get_height())/2,0)))
-
-            pygame.display.flip()
-
 #Fonctions pour charger la sauvegarde
     def load_save(self):
         self.NEW_SAVE = True
@@ -76,6 +51,94 @@ class Game():
         else:
             self.reload_groups()
         
+
+
+
+
+#FONCTIONS DES MENUS
+#Boucle du main menu
+    def start_menu(self):
+        #Variables
+        self.start_menu_active = False
+        self.running_start_menu = True
+        self.start_menu_code = 0
+        bool_mouse_pressed = False
+        time_to_wait_before_press_again = 0
+
+        #Code 0, les saves
+        Bouton(self.screen, (0,-1/2), self.drawer.bouton_size, "Sauvegarde 1", "save 1")
+        Bouton(self.screen, (0,0), self.drawer.bouton_size, "Sauvegarde 2", "save 2")
+        Bouton(self.screen, (0,1/2), self.drawer.bouton_size, "Sauvegarde 3", "save 3")
+        #Code 1, launch
+        Bouton(self.screen, (0,1/3), self.drawer.bouton_size, "Jouer", "launch", 1)
+        Bouton(self.screen, (0,-1/2), self.drawer.bouton_size, "Retour", "retour", 1)
+
+
+        while self.running_start_menu:
+            t1 = time.time()
+            #Inputs
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    Bouton.erased(range(0,9+1))
+                    self.running = False
+                    self.running_start_menu = False
+
+            key_pressed = pygame.key.get_pressed()
+            if key_pressed[pygame.K_RETURN]:
+                self.start_menu_active = True
+            if key_pressed[pygame.K_ESCAPE]:
+                self.start_menu_active = False
+                self.start_menu_code = 0
+            
+            #Actions des boutons
+            if Bouton.last_return == "save 1":
+                Bouton.last_return = ""
+                self.start_menu_code = 1
+                Save.choice_save(1)
+                if len(Save.save)==0:texte_save_to_print = "SAUVEGARDE VIDE"
+                else: texte_save_to_print = f"Vous êtes à {Save.save["player"]["zone"]}"
+                self.drawer.draw_text_on_screen(texte_save_to_print, (255,255,255),(self.screen.get_width()/2,self.screen.get_height()/2),txt_size=20)
+            elif Bouton.last_return == "save 2":
+                Bouton.last_return = ""
+                self.start_menu_code = 1
+                Save.choice_save(2)
+                if len(Save.save)==0:texte_save_to_print = "SAUVEGARDE VIDE"
+                else: texte_save_to_print = f"Vous êtes à {Save.save["player"]["zone"]}"
+                self.drawer.draw_text_on_screen(texte_save_to_print, (255,255,255),(self.screen.get_width()/2,20),txt_size=20,bold=True)
+            elif Bouton.last_return == "save 3":
+                Bouton.last_return = ""
+                self.start_menu_code = 1
+                Save.choice_save(3)
+                if len(Save.save)==0:texte_save_to_print = "SAUVEGARDE VIDE"
+                else: texte_save_to_print = f"Vous êtes à {Save.save["player"]["zone"]}"
+                self.drawer.draw_text_on_screen(texte_save_to_print, (255,255,255),(self.screen.get_width()/2,20),txt_size=20,bold=True)
+            elif Bouton.last_return == "retour":
+                Bouton.last_return = ""
+                self.start_menu_code = 0
+            elif Bouton.last_return == "launch":
+                Bouton.erased(range(0,9+1))
+                Bouton.last_return == ""
+                self.running_start_menu = False
+                
+
+            #Draw le background et boutons
+            self.drawer.draw_on_screen(self.drawer.mainfond, (0,0), self.screen.get_size())
+            if self.start_menu_active:
+                self.drawer.draw_dark_on_screen(127)
+                bool_mouse_pressed = Bouton.active_all(self.start_menu_code, time_to_wait_before_press_again<0)
+            else:
+                self.drawer.draw_text_on_screen_not_rel("Appuyez sur ENTER pour jouer", (255,255,255),(10,self.screen.get_height()-40),txt_size=14,italic=True)
+
+            t2 = time.time()
+            self.fps = max(round(1/(max(t2-t1,0.0001))),self.SEUIL_FPS)
+            
+            #Limiter le click de la sourie
+            if bool_mouse_pressed:
+                time_to_wait_before_press_again = 0.4
+            time_to_wait_before_press_again -= (t2-t1)
+                
+            pygame.display.flip()
+
 
 
 
@@ -170,10 +233,6 @@ class Game():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.VIDEORESIZE or event.type == pygame.VIDEOEXPOSE:
-                if self.resize_by_hor:
-                    self.map_manager.map_layer.zoom = self.screen.get_width()/self.SCREEN_DEFAULT_SIZE[0]
-                else:
-                    self.map_manager.map_layer.zoom = self.screen.get_height()/self.SCREEN_DEFAULT_SIZE[1]
                 self.reload_groups()
 
         self.handle_keyboard_inputs()
@@ -192,8 +251,7 @@ class Game():
     def paint(self)->None:
         #Après que layer group ait été update
         self.group.draw(self.screen)
-        pygame.display.flip()
-
+        
 #Bouger la caméra avec le joueur
     def update_camera(self)->None:
         self.group.center(self.player.pos)
@@ -209,6 +267,8 @@ class Game():
 #
 #Fonction centrale du programme
     def run(self)->None:
+        pygame.font.init()
+
         #True pour que le jeu tourne
         self.running = True
         self.running_start_menu = True
@@ -241,6 +301,7 @@ class Game():
             #Affichage
             self.paint()
             self.update_camera()
+            pygame.display.flip()
             
             #Running correctly
             self.get_stats_info_running()
